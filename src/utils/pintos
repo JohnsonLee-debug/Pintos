@@ -255,6 +255,10 @@ sub find_disks {
     # Find kernel, if we don't already have one.
     if (!exists $parts{KERNEL}) {
 	my $name = find_file ('/home/ljx/SourceCode/PintOS/pintos/src/threads/build/kernel.bin');
+	#my $name = find_file ('kernel.bin');
+        #my $current_path = gercwd;
+        #my $kernel_path = $current_path/../threads/build/kernel.bin;
+        #my $name = find_file($kernel_path);
 	die "Cannot find kernel\n" if !defined $name;
 	do_set_part ('KERNEL', 'file', $name);
     }
