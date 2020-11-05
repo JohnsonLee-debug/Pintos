@@ -354,6 +354,14 @@ thread_get_priority (void)
 {
   return thread_current ()->priority;
 }
+bool
+thread_cmp_priority (const struct list_elem*  A,
+                   const struct list_elem* B,
+                   void* aux UNUSED)
+{
+  return list_entry(A, struct thread, elem)->priority > 
+         list_entry(B, struct thread, elem)->priority;
+}
 
 /* Sets the current thread's nice value to NICE. */
 void

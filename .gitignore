@@ -56,3 +56,4 @@ dkms.conf
 .root
 *.json
 doc/
+*/.clangd/
