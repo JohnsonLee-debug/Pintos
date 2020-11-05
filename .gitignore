@@ -54,4 +54,5 @@ dkms.conf
 
 .vscode/
 .root
+*.json
 doc/
