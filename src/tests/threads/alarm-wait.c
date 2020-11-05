@@ -56,6 +56,7 @@ test_sleep (int thread_cnt, int iterations)
   int product;
   int i;
 
+  /* 假设使用循环调度算法 */
   /* This test does not work with the MLFQS. */
   ASSERT (!thread_mlfqs);
 
@@ -81,7 +82,7 @@ test_sleep (int thread_cnt, int iterations)
   ASSERT (output != NULL);
   for (i = 0; i < thread_cnt; i++)
     {
-      struct sleep_thread *t = threads + i;
+      struct sleep_thread *t = threads + i; // 第i个threads
       char name[16];
       
       t->test = &test;
@@ -89,7 +90,7 @@ test_sleep (int thread_cnt, int iterations)
       t->duration = (i + 1) * 10;
       t->iterations = 0;
 
-      snprintf (name, sizeof name, "thread %d", i);
+      snprintf (name, sizeof name, "thread %d", i );
       thread_create (name, PRI_DEFAULT, sleeper, t);
     }
   

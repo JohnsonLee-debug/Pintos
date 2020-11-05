@@ -304,9 +304,12 @@ thread_yield (void)
   struct thread *cur = thread_current ();
   enum intr_level old_level;
   
+/* Returns true during processing of an external interrupt
+   and false at all other times. */
+/* assert that the process is an internal interrupt*/
   ASSERT (!intr_context ());
 
-  old_level = intr_disable ();
+  old_level = intr_disable (); // 获取原来的interrupt状态, 并且禁止中断
   if (cur != idle_thread) 
     list_push_back (&ready_list, &cur->elem);
   cur->status = THREAD_READY;

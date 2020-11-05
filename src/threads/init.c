@@ -82,6 +82,7 @@ main (void)
   bss_init ();
 
   /* Break command line into arguments and parse options. */
+  /* 这两句完成以后的argv已经去掉了(./pintos), 原来的argv[1]成为了argv[0]*/
   argv = read_command_line ();
   argv = parse_options (argv);
 
@@ -324,7 +325,7 @@ run_actions (char **argv)
       const struct action *a;
       int i;
 
-      /* Find action name. */
+      /* Find action name. 从actions列表里选取一个action, 然后去参数列表里查找有没有相应action*/
       for (a = actions; ; a++)
         if (a->name == NULL)
           PANIC ("unknown action `%s' (use -h for help)", *argv);

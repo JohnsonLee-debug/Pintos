@@ -70,9 +70,9 @@ timer_calibrate (void)
 int64_t
 timer_ticks (void) 
 {
-  enum intr_level old_level = intr_disable ();
-  int64_t t = ticks;
-  intr_set_level (old_level);
+  enum intr_level old_level = intr_disable (); // 禁止中断
+  int64_t t = ticks;                           // 通过intr_disable来保证原子操作
+  intr_set_level (old_level);                  // 恢复中断寄存器为原来的状态
   return t;
 }
 
@@ -92,8 +92,7 @@ timer_sleep (int64_t ticks)
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
-    thread_yield ();
+  
 }
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
