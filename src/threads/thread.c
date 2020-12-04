@@ -200,6 +200,8 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
+  if(priority > thread_current()->priority)
+          thread_yield();
 
   return tid;
 }
@@ -237,7 +239,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
+  list_insert_ordered(&ready_list, &t->elem, &thread_cmp_priority, NULL);
   t->status = THREAD_READY;
   intr_set_level (old_level);
 }
@@ -311,7 +313,7 @@ thread_yield (void)
 
   old_level = intr_disable (); // 获取原来的interrupt状态, 并且禁止中断
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
+    list_insert_ordered(&ready_list, &cur->elem, &thread_cmp_priority, NULL);
   cur->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -345,7 +347,20 @@ void check_sleep(struct thread* t, void* aux UNUSED){
 void
 thread_set_priority (int new_priority) 
 {
+  /*enum intr_level old_level = intr_disable();*/
+
   thread_current ()->priority = new_priority;
+  int max_priority_ready = list_entry(list_begin(&ready_list), struct thread, elem)->priority;
+  if (new_priority < max_priority_ready)
+     thread_yield();
+  /*if (thread_cmp_priority(*/
+                          /*&thread_current()->elem, */
+                          /*list_max(&ready_list, &thread_cmp_priority, NULL),*/
+                          /*NULL))*/
+  /*{*/
+        /*thread_yield();*/
+  /*}*/
+  /*intr_set_level(old_level);*/
 }
 
 /* Returns the current thread's priority. */
@@ -483,7 +498,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
   t->time_to_sleep = 0;
   old_level = intr_disable ();
-  list_push_back (&all_list, &t->allelem);
+  list_insert_ordered(&all_list, &t->allelem, &thread_cmp_priority, NULL);
+ 
   intr_set_level (old_level);
 }
 
@@ -511,7 +527,8 @@ next_thread_to_run (void)
   if (list_empty (&ready_list))
     return idle_thread;
   else
-    return list_entry (list_pop_front (&ready_list), struct thread, elem);
+    return list_entry (list_pop_front(&ready_list), struct thread, elem);
+    //return list_entry (list_max(&ready_list, &thread_cmp_priority, NULL), struct thread, elem);
 }
 
 /* Completes a thread switch by activating the new thread's page

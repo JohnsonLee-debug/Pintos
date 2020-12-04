@@ -1,8 +1,4 @@
-/* The main thread acquires a lock.  Then it creates two
-   higher-priority threads that block acquiring the lock, causing
-   them to donate their priorities to the main thread.  When the
-   main thread releases the lock, the other threads should
-   acquire it in priority order.
+/* The main thread acquires a lock.  Then it creates two higher-priority threads that block acquiring the lock, causing them to donate their priorities to the main thread.  When the main thread releases the lock, the other threads should acquire it in priority order.
 
    Based on a test originally submitted for Stanford's CS 140 in
    winter 1999 by Matt Franklin <startled@leland.stanford.edu>,
