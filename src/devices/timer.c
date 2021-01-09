@@ -176,6 +176,14 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
+  if(thread_mlfqs){
+    thread_mlfqs_increase_recent_cpu();
+    if(ticks % TIMER_FREQ == 0){
+      thread_mlfqs_update_load_avg_and_recent_cpu();
+    } else if(ticks % 4 == 0){
+      thread_mlfqs_update_priority(thread_current());
+    }
+  }
   ticks++;
   thread_tick();
   thread_foreach(check_sleep, NULL);

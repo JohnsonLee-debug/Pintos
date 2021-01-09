@@ -4,6 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
+#include "threads/fixed.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -104,6 +105,8 @@ struct thread
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
     int time_to_sleep;
+    int nice;
+    float_t recent_cpu;
   };
 
 /* If false (default), use round-robin scheduler.
@@ -138,14 +141,17 @@ int thread_get_priority (void);
 void thread_set_priority (int);
 bool thread_cmp_priority(const struct list_elem*, const struct list_elem*, void* aux UNUSED);
 void thread_donate_priority(struct thread *);
+void thread_update_priority(struct thread *);
 void thread_hold_lock(struct lock*);
 void thread_remove_lock(struct lock *);
-void thread_update_priority(struct thread *);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void check_sleep(struct thread* t, void* aux UNUSED);
-
+void thread_mlfqs_increase_recent_cpu(void);
+void thread_mlfqs_update_priority(struct thread*);
+void thread_mlfqs_update_load_avg_and_recent_cpu(void);
+void thread_mlfqs_update_recent_cpu(struct thread* t, void* aux UNUSED);
 #endif /* threads/thread.h */
